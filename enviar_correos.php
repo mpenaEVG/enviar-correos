@@ -1,32 +1,15 @@
 <?php 
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
-  
+ 
   require 'vendor/autoload.php';
 
-  $host = 'localhost';
-  $db = '2daw';
-  $user = 'mau';
-  $password = getenv('DB_PASSWORD');
 
-
-
-  try {
-
-    $pdo = new pdo("mysql:host=$host;dbname=$db;charset=utf8",$user,$password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $pdo->query(("SELECT nombre, email FROM alumnos"));
-    $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($alumnos as $alumno) {
-      $nombre = $alumno['nombre'];
-      $correo = $alumno['email'];
-      $asunto = "Prueba de correo para $nombre";
-      $mensaje = "Hola $nombre, esto es un correo de prueba generado con php";
-      
+  if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alumnos'])){
+    
+    $alumnos = $_POST['alumnos'];
+    var_dump($alumnos);
       $mail = new PHPMailer(true);
-
 
       try {
         // Configuracion servicio SMTP
@@ -38,26 +21,29 @@
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        //Configuracion del correo
-        $mail->setFrom('mauri.pea@gmail.com', 'Mauri');
-        $mail->addAddress($correo,$nombre);
-        $mail->Subject = $asunto;
-        $mail->Body = $mensaje;
+        foreach ($alumnos as $alumno) {
+            $mail->addAddress($alumno['correo'],$alumno['nombre']);
+            $mail->Subject = 'Detalles de la cuenta';
+            $mail->Body = "Hola ". $alumno['nombre'] .", bienvenido a la escuela de guadalupe, tus credenciales son: \n 
+              Usuario: ". $alumno['usuario'] ."\n 
+              Contraseña: ". $alumno['contraseña'] ."\n 
+              Un saludo cordial.";
 
-        $mail->send();
-        echo "Correo enviado a $nombre, ($correo)</br>";
+              if($mail->send()){
+
+              echo "Correo enviado a ". $alumno['nombre'] ." ,". $alumno['correo'] ."</br>";
+            }else{
+
+              echo "El correo no pudo ser enviado a ". $alumno['correo'] ."  ". $mail->ErrorInfo ."</br>";
+            }
+         }
       
       } catch (Exception $e) {
         echo "Error al enviar el correo a $correo: {$mail->ErrorInfo}</br>";
       }
     }
   
-  } catch (PDOException $e) {
-
-    die("Error al conectar con la base de datos ". $e->getMessage());
-
-  }
-      
+  
 
 
 
