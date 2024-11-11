@@ -22,5 +22,5 @@ El email sería:
 
     Un Saludo!
 
-
-
+### Notas
+ - Validar la extensión del archivo también desde el servidor 
