@@ -5,12 +5,24 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
       $file = $_FILES['excel_file']['tmp_name'];
+      $filename = $_FILES['excel_file']['name'];
+
+
+
+      $extensionesPermitidas = ['xls','xlsx'];
+      $fileExtension = pathinfo($filename,PATHINFO_EXTENSION);
+
+      if(!in_array($fileExtension,$extensionesPermitidas)){
+        die("El archivo no tiene una extensión válida");
+      }
+
 
       // Cargar el archivo Excel
       $spreadsheet = IOFactory::load($file);
       $sheet = $spreadsheet->getActiveSheet();
     
       $datosAlumnos = [];
+      $filaIndex = 0;
 
   foreach ($sheet->getRowIterator() as $row) {
       $cellIterator = $row->getCellIterator();
@@ -32,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         ];
       $datosAlumnos[] = $alumnos;
       }
+
+    $filaIndex++;
   }
 
       require 'mostrar_alumno_correo.php';
