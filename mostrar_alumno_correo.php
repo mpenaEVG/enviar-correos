@@ -12,6 +12,10 @@
         echo "Desea enviar un correo a ";
 
         echo '<form action="enviar_correos.php" method="POST">'; 
+
+         foreach($cabecera as $columna) {
+            echo '<input type="hidden" name="cabecera[]" value="' . $columna . '">';
+          }
         
         foreach($datosAlumnos as $index => $alumno){
 

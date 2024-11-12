@@ -8,7 +8,8 @@
   if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['alumnos'])){
     
     $alumnos = $_POST['alumnos'];
-    var_dump($alumnos);
+    $cabecera = $_POST['cabecera'];
+
       $mail = new PHPMailer(true);
 
       try {
@@ -22,22 +23,38 @@
         $mail->Port = 587;
 
         foreach ($alumnos as $alumno) {
-            $mail->addAddress($alumno['correo'],$alumno['nombre']);
-            $mail->Subject = 'Detalles de la cuenta';
-            $mail->Body = "Hola ". $alumno['nombre'] .", bienvenido a la escuela de guadalupe, tus credenciales son: \n 
-              Usuario: ". $alumno['usuario'] ."\n 
-              Contraseña: ". $alumno['contraseña'] ."\n 
-              Un saludo cordial.";
+          $alumno = array_change_key_case($alumno,CASE_LOWER); //Cambiamos todas las claves a minúscula
+          if(isset($alumno['correo']) && !empty($alumno['correo'])){
+            if(isset($alumno['nombre']) && !empty($alumno['nombre'])){
+              $mail->addAddress($alumno['correo'],$alumno['nombre']);
+              $mail->Subject = 'Credenciales Hosting';
+
+
+              $body = 'Hola'. $alumno['nombre'] .' tus credenciales del hosting son las siguientes:';
+              foreach($cabecera as $columna){
+                if(isset($alumno[$columna])){
+                  if($alumno[$columna] !== 'correo' && $alumno[$columna] !== 'nombre'){
+                     $body .= $columna .": ". $alumno[$columna] . "\n";
+                  }
+                }
+              }
+              $body .= "\n Un saludo cordial";
+              $mail->Body = $body;
 
               if($mail->send()){
+                echo "Correo enviado a". $alumno['nombre'] ." (". $alumno['correo']. ")";
+              } else{
 
-              echo "Correo enviado a ". $alumno['nombre'] ." ,". $alumno['correo'] ."</br>";
+                echo "Fallo: correo no pudo ser enviado a". $alumno['nombre'] ." (". $alumno['correo']. ")";
+              }
             }else{
-
-              echo "El correo no pudo ser enviado a ". $alumno['correo'] ."  ". $mail->ErrorInfo ."</br>";
-            }
-         }
-      
+              echo "Faltan datos para el nombre del alumno: " . $alumno['correo'] . "<br>";
+            } 
+          } else {
+              echo "El alumno no tiene correo válido: " . (isset($alumno['nombre']) ? $alumno['nombre'] : 'Desconocido') . "<br>";
+          }
+        }
+          
       } catch (Exception $e) {
         echo "Error al enviar el correo a $correo: {$mail->ErrorInfo}</br>";
       }
