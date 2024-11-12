@@ -24,3 +24,4 @@ El email sería:
 
 ### Notas
  - Validar la extensión del archivo también desde el servidor 
+ - Validar lado cliente con Javascript
