@@ -12,16 +12,18 @@
         echo "Desea enviar un correo a ";
 
         echo '<form action="enviar_correos.php" method="POST">'; 
-   
-     foreach ($datosAlumnos as $index => $alumno) {
-        echo "</br>";
-        echo $alumno['nombre'] ." correo: " .$alumno['correo']. "/// Contraseña: ". $alumno['contraseña'] ." -- Usuario: ". $alumno['usuario'];
-        echo '<input type="hidden" name="alumnos['. $index .'][nombre]" value="'. $alumno['nombre'] .'">';
-        echo '<input type="hidden" name="alumnos['. $index .'][correo]" value="'. $alumno['correo'] .'">';
-        echo '<input type="hidden" name="alumnos['. $index .'][contraseña]" value="'. $alumno['contraseña'] .'">';
-        echo '<input type="hidden" name="alumnos['. $index .'][usuario]" value="'. $alumno['usuario'] .'">';
+        
+        foreach($datosAlumnos as $index => $alumno){
 
-    }
+          echo "</br>";
+          foreach($cabecera as $columna){
+            echo $columna .": ". $alumno[$columna] ." ";
+          }
+
+          foreach($cabecera as $columna){
+            echo '<input type="hidden" name="alumnos['. $index .']['. $columna .']" value="'. $alumno[$columna]. '">';
+          }
+        }
         echo '</br>';
         echo '</br>';
         echo "?";

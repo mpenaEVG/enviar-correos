@@ -25,31 +25,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
       $filaIndex = 0;
 
   foreach ($sheet->getRowIterator() as $row) {
-      $cellIterator = $row->getCellIterator();
-      $cellIterator->setIterateOnlyExistingCells(true); 
-      
-      $filaDatos = [];
-      
-      foreach ($cellIterator as $cell) {
+    $cellIterator = $row->getCellIterator();
+    $cellIterator->setIterateOnlyExistingCells(true);
+    $filaDatos = [];
+
+    foreach ($cellIterator as $cell) {
         $filaDatos[] = $cell->getValue();
-      }
+    }
 
-      if(isset($filaDatos[0],$filaDatos[1],$filaDatos[2],$filaDatos[3])){
-    
-        $alumnos =[
-          'nombre'=>$filaDatos[0],
-          'correo'=>$filaDatos[1],
-          'contraseña'=>$filaDatos[2],
-          'usuario'=>$filaDatos[3]
-        ];
-      $datosAlumnos[] = $alumnos;
-      }
-
-    $filaIndex++;
-  }
-
+      if (array_filter($filaDatos)) {
+        if($filaIndex === 0){
+            $cabecera = $filaDatos;
+            $filaIndex++;  
+        }else{
+            $alumno = [];
+            foreach ($cabecera as $index => $columna) {
+                    $alumno[$columna] = $filaDatos[$index]; 
+            }
+            $datosAlumnos[] = $alumno;
+        }
+       }
+  }     
       require 'mostrar_alumno_correo.php';
-
 
 }else{
   echo "no se pudo leer el excel";
