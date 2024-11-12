@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +8,7 @@
     <h2>Subir Archivo Excel</h2>
     <p>Introduce tu excel para mostar su contenido..</p>
     <form action="leer_excel.php" method="POST" enctype="multipart/form-data">
-        <input type="file" name="excel_file" accept=".xls, .xlsx" required>
+        <input type="file" name="excel_file" accept=".xls, .xlsx"  onchange="validarArchivo(event)">
         <pre>
         <button type="submit">Subir</button>
         </pre>
