@@ -30,10 +30,10 @@
               $mail->Subject = 'Credenciales Hosting';
 
 
-              $body = 'Hola'. $alumno['nombre'] .' tus credenciales del hosting son las siguientes:';
+              $body = 'Hola '. $alumno['nombre'] .'! tus credenciales del hosting son las siguientes:\n'; 
               foreach($cabecera as $columna){
                 if(isset($alumno[$columna])){
-                  if($alumno[$columna] !== 'correo' && $alumno[$columna] !== 'nombre'){
+                  if($columna !== 'correo' && $columna !== 'nombre'){
                      $body .= $columna .": ". $alumno[$columna] . "\n";
                   }
                 }
